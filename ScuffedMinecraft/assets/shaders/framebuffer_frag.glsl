@@ -23,7 +23,7 @@ void main()
 	if (underwater)
 	{
 		float fogFactor = (fogFar - depth) / (fogFar - fogNear);
-		fogFactor = clamp(fogFactor, 0.0, 1.0);
+		fogFactor = clamp(fogFactor, .354, 1.0);
 
 		finalColor = mix(fogColor, color, fogFactor);
 	}
