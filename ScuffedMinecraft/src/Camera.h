@@ -9,8 +9,7 @@ enum Camera_Movement {
 	LEFT,
 	RIGHT,
 	UP,
-	DOWN,
-	FORWARD_NO_Y
+	DOWN
 };
 
 // Default camera values
@@ -34,9 +33,9 @@ public:
 	float Pitch;
 	// camera options
 	float MovementSpeed;
+	float MaxMovementSpeed = 120;
 	float MouseSensitivity;
 	float Zoom;
-	bool absoluteVerticalMovement = true;
 
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 

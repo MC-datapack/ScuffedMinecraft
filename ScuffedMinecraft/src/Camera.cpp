@@ -29,25 +29,38 @@ glm::mat4 Camera::GetViewMatrix()
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;
-    if (direction == FORWARD)
-        Position += Front * velocity;
-    if (direction == BACKWARD)
-        Position -= Front * velocity;
-    if (direction == LEFT)
-        Position -= Right * velocity;
-    if (direction == RIGHT)
-        Position += Right * velocity;
-    if (direction == UP)
-        Position += (absoluteVerticalMovement ? glm::vec3(0, 1, 0) : Up) * velocity;
-    if (direction == DOWN)
-        Position -= (absoluteVerticalMovement ? glm::vec3(0, 1, 0) : Up) * velocity;
-    if (direction == FORWARD_NO_Y)
+    if (direction == FORWARD) 
     {
         glm::vec3 moveDir = Front;
         moveDir.y = 0;
         moveDir = glm::normalize(moveDir);
         Position += moveDir * velocity;
     }
+    if (direction == BACKWARD)
+    {
+        glm::vec3 moveDir = Front;
+        moveDir.y = 0;
+        moveDir = glm::normalize(moveDir);
+        Position -= moveDir * velocity;
+    }
+    if (direction == LEFT)
+    {
+        glm::vec3 moveDir = Front;
+        moveDir.y = 0;
+        moveDir = glm::normalize(moveDir);
+        Position -= RIGHT * velocity;
+    }
+    if (direction == RIGHT)
+    {
+        glm::vec3 moveDir = Front;
+        moveDir.y = 0;
+        moveDir = glm::normalize(moveDir);
+        Position += RIGHT * velocity;
+    }
+    if (direction == UP)
+        Position += (glm::vec3(0, 1, 0) * velocity) / .8F;
+    if (direction == DOWN)
+        Position -= (glm::vec3(0, 1, 0) * velocity) / .8F;
 }
 
 // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -78,6 +91,8 @@ void Camera::ProcessMouseScroll(float yoffset)
     MovementSpeed += (float)yoffset;
     if (MovementSpeed < 0)
         MovementSpeed = 0;
+    if (MovementSpeed > MaxMovementSpeed)
+        MovementSpeed = MaxMovementSpeed;
 }
 
 // calculates the front vector from the Camera's (updated) Euler Angles

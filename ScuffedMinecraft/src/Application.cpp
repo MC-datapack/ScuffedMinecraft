@@ -516,7 +516,6 @@ int main(int argc, char *argv[])
 				Planet::planet->ClearChunkQueue();
 			if (ImGui::SliderInt("Render Height", &Planet::planet->renderHeight, 0, 10))
 				Planet::planet->ClearChunkQueue();
-			ImGui::Checkbox("Use absolute Y axis for camera vertical movement", &camera.absoluteVerticalMovement);
 			ImGui::End();
 
 			ImGui::Render();
@@ -583,21 +582,16 @@ void processInput(GLFWwindow* window)
 		f1Down = false;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-			camera.ProcessKeyboard(FORWARD_NO_Y, deltaTime);
-		else
-			camera.ProcessKeyboard(FORWARD, deltaTime);
-	}
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		camera.ProcessKeyboard(UP, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
