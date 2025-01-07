@@ -81,6 +81,9 @@
     <ClCompile Include="src\ChunkData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OreNoiseSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -152,6 +155,12 @@
     <ClInclude Include="src\ChunkData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OreNoiseSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\main_vert.glsl" />
@@ -177,5 +186,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="vendor\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ScuffedMinecraft.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

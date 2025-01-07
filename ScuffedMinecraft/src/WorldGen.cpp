@@ -17,23 +17,32 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
 
     // Init noise settings
 	static NoiseSettings surfaceSettings[]{
-		{ 0.01f, 20.0f, 0 },
-		{ 0.05f,  3.0f, 0 }
+		{ 0.01f, 20.0f, 1 },
+		{ 0.05f,  3.0f, 1 }
 	};
     static int surfaceSettingsLength = sizeof(surfaceSettings) / sizeof(*surfaceSettings);
 
 	static NoiseSettings caveSettings[]{
-		{ 0.05f, 1.0f, 0, .5f, 0, 100 }
+		{ 0.05f, 1.2f, 0, .5f, Blocks::AIR, 5 },
+		{ 0.05f, 2.2f, 0, .5f, Blocks::AIR, -500 },
+		{ 0.05f, 10.2f, 0, .5f, Blocks::AIR, -2500 }
 	};
 	static int caveSettingsLength = sizeof(caveSettings) / sizeof(*caveSettings);
 
-	static NoiseSettings oreSettings[]{
-		{ 0.075f, 1.0f, 8.54f, .75f, 1, 0 }
+	static OreNoiseSettings oreSettings[] = {
+		OreNoiseSettings(0.1f, 1.0f, 8.54f, 0.75f, Blocks::COAL_ORE, Blocks::DEEPSLATE_COAL_ORE, Blocks::NETHER_QUARTZ_ORE,10),
+		OreNoiseSettings(0.2f, 1.0f, 8.54f, 0.75f, Blocks::COPPER_ORE, Blocks::DEEPSLATE_COPPER_ORE, Blocks::NETHER_QUARTZ_ORE,15),
+		OreNoiseSettings(0.25f, 1.0f, 8.54f, 0.75f, Blocks::IRON_ORE, Blocks::DEEPSLATE_IRON_ORE, Blocks::NETHER_QUARTZ_ORE,5),
+		OreNoiseSettings(0.35f, 1.0f, 8.54f, 0.75f, Blocks::GOLD_ORE, Blocks::DEEPSLATE_GOLD_ORE, Blocks::NETHER_GOLD_ORE,-5),
+		OreNoiseSettings(0.45f, 1.0f, 8.54f, 0.75f, Blocks::EMERALD_ORE, Blocks::DEEPSLATE_EMERALD_ORE, Blocks::NETHER_GOLD_ORE,-60),
+		OreNoiseSettings(0.55f, 1.0f, 8.54f, 0.75f, Blocks::LAPIS_ORE, Blocks::DEEPSLATE_LAPIS_ORE, Blocks::NETHER_GOLD_ORE,0),
+		OreNoiseSettings(0.65f, 1.0f, 8.54f, 0.75f, Blocks::DIAMOND_ORE, Blocks::DEEPSLATE_DIAMOND_ORE, Blocks::ANCIENT_DEBRIS,-100),
+		OreNoiseSettings(0.05f, 1.0f, 8.54f, 1.25f, Blocks::LAVA, Blocks::LAVA, Blocks::LAVA, -2500)
 	};
     static int oreSettingsLength = sizeof(oreSettings) / sizeof(*oreSettings);
 
 	static SurfaceFeature surfaceFeatures[]{
-		// Pond
+		// Water Pond
 		{
 			{ 0.43f, 1.0f, 2.35f, .85f, 1, 0 },	// Noise
 			{									// Blocks
@@ -52,6 +61,62 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
 				2, 13, 13, 13, 13, 13, 2,
 				0, 2,  13, 13, 13, 2,  0,
 				0, 0,  2,  13, 2,  0,  0,
+
+				0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0,
+			},
+			{									// Replace?
+				false, false, false, false, false, false, false,
+				false, false, false, false, false, false, false,
+				false, false, false, true,  true,  false, false,
+				false, false, true,  true,  true,  false, false,
+				false, false, false, true,  false, false, false,
+				false, false, false, false, false, false, false,
+				false, false, false, false, false, false, false,
+
+				false, false, true,  true, false, false, false,
+				false, false, true,  true, true,  false, false,
+				false, true,  true,  true, true,  true,  false,
+				false, true,  true,  true, true,  true,  false,
+				false, true,  true,  true, true,  true,  false,
+				false, false, true,  true, true,  false, false,
+				false, false, false, true, false, false, false,
+
+				false, false, true,  true, false, false, false,
+				false, false, true,  true, true,  true,  false,
+				false, true,  true,  true, true,  true,  false,
+				false, true,  true,  true, true,  true,  false,
+				false, true,  true,  true, true,  true,  false,
+				false, false, true,  true, true,  false, false,
+				false, false, false, true, false, false, false,
+			},
+			7, 3, 7,							// Size
+			-3, -2, -3							// Offset
+		},
+		// Lava Pond
+		{
+			{ 0.83f, 1.0f, 2.35f, .85f, 1, 0 },	// Noise
+			{									// Blocks
+				0, 0, 0,  0,  0,  0, 0,
+				0, 0, 0,  0,  0,  0, 0,
+				0, 0, 0,  35, 35, 0, 0,
+				0, 0, 35, 35, 35, 0, 0,
+				0, 0, 0,  35, 0,  0, 0,
+				0, 0, 0,  0,  0,  0, 0,
+				0, 0, 0,  0,  0,  0, 0,
+
+				0, 2,  35, 35, 2,  0,  0,
+				0, 2,  35, 35, 35, 2,  0,
+				2, 35, 35, 35, 35, 35, 2,
+				2, 35, 35, 35, 35, 35, 2,
+				2, 35, 35, 35, 35, 35, 2,
+				0, 2,  35, 35, 35, 2,  0,
+				0, 0,  2,  35, 2,  0,  0,
 
 				0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0,
@@ -311,6 +376,7 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
             {
                 // Cave noise
                 bool cave = false;
+				uint16_t caveBlock = Blocks::AIR;
                 for (int i = 0; i < caveSettingsLength; i++)
                 {
                     if (y + startY > caveSettings[i].maxHeight)
@@ -325,6 +391,7 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
                     if (noiseCaves > caveSettings[i].chance) 
                     {
                         cave = true;
+						caveBlock = caveSettings[i].block;
                         break;
                     }
                 }
@@ -339,8 +406,8 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
                     else
                         chunkData[currentIndex] = Blocks::AIR;
                 }
-                else if (cave)
-                    chunkData[currentIndex] = Blocks::AIR;
+				else if (cave)
+					chunkData[currentIndex] = caveBlock;
                 // Ground
                 else 
                 {
@@ -356,12 +423,12 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
                             (float)((z + startZ) * oreSettings[i].frequency) + oreSettings[i].offset)
                             * oreSettings[i].amplitude;
 
-                        if (noiseOre > oreSettings[i].chance) 
-                        {
-                            chunkData[currentIndex] = oreSettings[i].block;
-                            blockSet = true;
-                            break;
-                        }
+						if (noiseOre > oreSettings[i].chance)
+						{
+							chunkData[currentIndex] = oreSettings[i].getOre(y + startY);
+							blockSet = true;
+							break;
+						}
                     }
 
                     if (!blockSet)
@@ -370,20 +437,20 @@ void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
 							if (noiseY > waterLevel + 1)
 								chunkData[currentIndex] = Blocks::GRASS_BLOCK;
 							else
-								if (y + startY <= waterLevel -1)
+								if (y + startY <= waterLevel - 1)
 									chunkData[currentIndex] = Blocks::GRAVEL;
 								else
 									chunkData[currentIndex] = Blocks::SAND;
-                        else if (y + startY > 10)
-                            if (noiseY > waterLevel + 1)
-                                chunkData[currentIndex] = Blocks::DIRT_BLOCK;
-                            else
-								if (y + startY <= waterLevel -1)
+						else if (y + startY > 10)
+							if (noiseY > waterLevel + 1)
+								chunkData[currentIndex] = Blocks::DIRT_BLOCK;
+							else
+								if (y + startY <= waterLevel - 1)
 									chunkData[currentIndex] = Blocks::GRAVEL;
 								else
 									chunkData[currentIndex] = Blocks::SAND;
-                        else
-                            chunkData[currentIndex] = Blocks::STONE_BLOCK;
+						else
+						chunkData[currentIndex] = y + startY < -500 ? y + startY < -2500 ? Blocks::NETHERRACK : Blocks::DEEPSALTE : Blocks::STONE;
                     }
                 }
 
