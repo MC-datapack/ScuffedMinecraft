@@ -7,7 +7,7 @@
 #include "Blocks.h"
 #include "Planet.h"
 
-void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData) 
+void WorldGen::GenerateChunkData(ChunkPos chunkPos, uint16_t* chunkData)
 {
     static int chunkSize = CHUNK_SIZE;
 

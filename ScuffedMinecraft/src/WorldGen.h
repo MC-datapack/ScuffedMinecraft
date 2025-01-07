@@ -25,7 +25,7 @@ namespace WorldGen
 	};
 
 	static NoiseSettings caveSettings[]{
-		{ 0.05f, 1.2f, 0, .5f, Blocks::AIR, 5 },
+		{ 0.05f, 1.2f, 0, .5f, Blocks::AIR, 0 },
 		{ 0.05f, 2.2f, 0, .5f, Blocks::AIR, -500 },
 		{ 0.05f, 10.2f, 0, .5f, Blocks::AIR, -2500 }
 	};
