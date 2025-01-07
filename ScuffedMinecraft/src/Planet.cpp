@@ -3,16 +3,19 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <unordered_map>
 
 #include "WorldGen.h"
+#include "Blocks.h"
+#include "Block.h"
 
 Planet* Planet::planet = nullptr;
 
 //static const unsigned int CHUNK_SIZE = 32;
 
 // Public
-Planet::Planet(Shader* solidShader, Shader* waterShader, Shader* billboardShader)
-	: solidShader(solidShader), waterShader(waterShader), billboardShader(billboardShader)
+Planet::Planet(Shader* solidShader, Shader* fluidShader, Shader* billboardShader)
+	: solidShader(solidShader), fluidShader(fluidShader), billboardShader(billboardShader)
 {
 	chunkThread = std::thread(&Planet::ChunkThreadUpdate, this);
 }
@@ -72,14 +75,14 @@ void Planet::Update(glm::vec3 cameraPos)
 	}
 
 	glEnable(GL_BLEND);
-	waterShader->use();
+	fluidShader->use();
 	for (auto it = chunks.begin(); it != chunks.end(); )
 	{
 		int chunkX = (*it->second).chunkPos.x;
 		int chunkY = (*it->second).chunkPos.y;
 		int chunkZ = (*it->second).chunkPos.z;
 
-		(*it->second).RenderWater(waterShader);
+		(*it->second).RenderWater(fluidShader);
 		++it;
 	}
 
@@ -105,7 +108,7 @@ void Planet::ChunkThreadUpdate()
 				delete chunkData.at(pos);
 				chunkData.erase(pos);
 			}
-			++it;
+			it++; // Issue because of too fast y movement
 		}
 
 		// Check if camera moved to new chunk
@@ -237,7 +240,7 @@ void Planet::ChunkThreadUpdate()
 					chunkMutex.unlock();
 
 					// Create chunk object
-					Chunk* chunk = new Chunk(chunkPos, solidShader, waterShader);
+					Chunk* chunk = new Chunk(chunkPos, solidShader, fluidShader);
 
 					// Set chunk data
 					{

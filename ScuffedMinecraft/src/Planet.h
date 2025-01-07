@@ -19,7 +19,7 @@ class Planet
 {
 // Methods
 public:
-	Planet(Shader* solidShader, Shader* waterShader, Shader* billboardShader);
+	Planet(Shader* solidShader, Shader* fluidShader, Shader* billboardShader);
 	~Planet();
 
 	ChunkData* GetChunkData(ChunkPos chunkPos);
@@ -49,7 +49,7 @@ private:
 	int camChunkX = -100, camChunkY = -100, camChunkZ = -100;
 
 	Shader* solidShader;
-	Shader* waterShader;
+	Shader* fluidShader;
 	Shader* billboardShader;
 
 	std::thread chunkThread;

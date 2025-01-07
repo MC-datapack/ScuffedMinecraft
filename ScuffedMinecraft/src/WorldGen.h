@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "NoiseSettings.h"
+#include "OreNoiseSettings.h"
 #include "SurfaceFeature.h"
 #include "ChunkData.h"
 #include "glm/glm.hpp"

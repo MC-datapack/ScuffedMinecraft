@@ -15,6 +15,7 @@
 #include <stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <chrono>
@@ -32,6 +33,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
+bool inEscMenu = false;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 int fpsCount = 0;
@@ -178,10 +180,9 @@ int main(int argc, char *argv[])
 
 	shader.setFloat("texMultiplier", 0.0625f);
 
-	Shader waterShader("assets/shaders/water_vert.glsl", "assets/shaders/water_frag.glsl");
-	waterShader.use();
-
-	waterShader.setFloat("texMultiplier", 0.0625f);
+	Shader fluidShader("assets/shaders/water_vert.glsl", "assets/shaders/water_frag.glsl");
+	fluidShader.use();
+	fluidShader.setFloat("texMultiplier", 0.0625f);
 
 	Shader billboardShader("assets/shaders/billboard_vert.glsl", "assets/shaders/billboard_frag.glsl");
 	billboardShader.use();
@@ -309,12 +310,12 @@ int main(int argc, char *argv[])
 
 	stbi_image_free(data2);
 
+	Planet::planet = new Planet(&shader, &fluidShader, &billboardShader);
+
 	// Create camera
 	camera = Camera(glm::vec3(0.0f, 25.0f, 0.0f));
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	Planet::planet = new Planet(&shader, &waterShader, &billboardShader);
 
 	glm::mat4 ortho = glm::ortho(0.0f, (float)windowX, (float)windowY, 0.0f, 0.0f, 10.0f);
 
@@ -352,8 +353,8 @@ int main(int argc, char *argv[])
 			fpsStartTime = currentTimePoint;
 		}
 
-		waterShader.use();
-		waterShader.setFloat("time", currentFrame);
+		fluidShader.use();
+		fluidShader.setFloat("time", currentFrame);
 		outlineShader.use();
 		outlineShader.setFloat("time", currentFrame);
 
@@ -385,10 +386,10 @@ int main(int argc, char *argv[])
 		unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		waterShader.use();
-		viewLoc = glGetUniformLocation(waterShader.ID, "view");
+		fluidShader.use();
+		viewLoc = glGetUniformLocation(fluidShader.ID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		projectionLoc = glGetUniformLocation(waterShader.ID, "projection");
+		projectionLoc = glGetUniformLocation(fluidShader.ID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		billboardShader.use();
@@ -458,13 +459,22 @@ int main(int argc, char *argv[])
 				localBlockY,
 				localBlockZ);
 
-			if (Blocks::blocks[blockType].blockType == Block::LIQUID)
+			if (Blocks::blocks[blockType].blockID == Blocks::WATER)
 			{
 				framebufferShader.setBool("underwater", true);
 			}
 			else
 			{
 				framebufferShader.setBool("underwater", false);
+			}
+
+			if (Blocks::blocks[blockType].blockID == Blocks::LAVA)
+			{
+				framebufferShader.setBool("underlava", true);
+			}
+			else
+			{
+				framebufferShader.setBool("underlava", false);
 			}
 		}
 
@@ -503,7 +513,8 @@ int main(int argc, char *argv[])
 			glDisable(GL_COLOR_LOGIC_OP);
 
 			// Draw ImGui UI
-			ImGui::Begin("Test");
+			ImGui::Begin("Informations");
+			ImGui::Text("Selected Block: %s", Blocks::blocks[selectedBlock].blockName.c_str());
 			ImGui::Text("FPS: %d (Avg: %d, Min: %d, Max: %d)", (int)fps, (int)avgFps, (int)lowestFps, (int)highestFps);
 			ImGui::Text("MS: %f", deltaTime * 100.0f);
 			if (ImGui::Checkbox("VSYNC", &vsync))
@@ -511,10 +522,10 @@ int main(int argc, char *argv[])
 			ImGui::Text("Chunks: %d (%d rendered)", Planet::planet->numChunks, Planet::planet->numChunksRendered);
 			ImGui::Text("Position: x: %f, y: %f, z: %f", camera.Position.x, camera.Position.y, camera.Position.z);
 			ImGui::Text("Direction: x: %f, y: %f, z: %f", camera.Front.x, camera.Front.y, camera.Front.z);
-			ImGui::Text("Selected Block: %s", Blocks::blocks[selectedBlock].blockName.c_str());
-			if (ImGui::SliderInt("Render Distance", &Planet::planet->renderDistance, 0, 30))
+		
+			if (ImGui::SliderInt("Render Distance", &Planet::planet->renderDistance, 1, 32))
 				Planet::planet->ClearChunkQueue();
-			if (ImGui::SliderInt("Render Height", &Planet::planet->renderHeight, 0, 10))
+			if (ImGui::SliderInt("Render Height", &Planet::planet->renderHeight, 1, 16))
 				Planet::planet->ClearChunkQueue();
 			ImGui::End();
 
@@ -563,10 +574,11 @@ void processInput(GLFWwindow* window)
 		escapeDown = true;
 		menuMode = !menuMode;
 		glfwSetInputMode(window, GLFW_CURSOR, menuMode ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		inEscMenu = menuMode;
 		firstMouse = true;
 		//glfwSetWindowShouldClose(window, true);
 	}
-	else
+	else 
 		escapeDown = false;
 
 	// UI Toggle
@@ -580,7 +592,6 @@ void processInput(GLFWwindow* window)
 	}
 	else
 		f1Down = false;
-
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -597,6 +608,7 @@ void processInput(GLFWwindow* window)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	if (inEscMenu) return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		auto result = Physics::Raycast(camera.Position, camera.Front, 5);
@@ -626,7 +638,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		int blockX = result.blockX;
 		int blockY = result.blockY;
 		int blockZ = result.blockZ;
-		
+
 		// Choose face to place on
 		if (abs(distX) > abs(distY) && abs(distX) > abs(distZ))
 			blockX += (distX > 0 ? 1 : -1);

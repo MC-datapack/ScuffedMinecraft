@@ -35,7 +35,7 @@ void main()
 	if (aTop == 1)
 	{
 		pos.y -= .1;
-		pos.y += (sin(pos.x * 3.1415926535 / 2 + time) + sin(pos.z * 3.1415926535 / 2 + time * 1.5)) * .1;
+		pos.y += (sin(pos.x * 3.1415926535 / 2 + time) + sin(pos.z * 3.1415926535 / 2 + time * 1.5)) * .05;
 	}
 	gl_Position = projection * view * model * vec4(pos, 1.0);
 	vec2 currentTex = aTexCoord;

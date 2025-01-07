@@ -7,8 +7,10 @@ uniform sampler2D screenTexture;
 uniform sampler2D depthTexture;
 
 uniform bool underwater;
+uniform bool underlava;
 
-const vec3 fogColor = vec3(0, 0, 0.25);
+const vec3 waterFogColor = vec3(0, 0, 0.25);
+const vec3 lavaFogColor = vec3(0.45, 0.1, 0);
 const float fogNear = 0.9;
 const float fogFar = 1.0;
 
@@ -25,7 +27,14 @@ void main()
 		float fogFactor = (fogFar - depth) / (fogFar - fogNear);
 		fogFactor = clamp(fogFactor, .354, 1.0);
 
-		finalColor = mix(fogColor, color, fogFactor);
+		finalColor = mix(waterFogColor, color, fogFactor);
+	}
+	if (underlava)
+	{
+		float fogFactor = (fogFar - depth) / (fogFar - fogNear);
+		fogFactor = clamp(fogFactor, .0154, .5);
+
+		finalColor = mix(lavaFogColor, color, fogFactor);
 	}
 
 	FragColor = vec4(vec3(finalColor), 1.0);
